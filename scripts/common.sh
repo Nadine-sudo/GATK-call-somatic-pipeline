@@ -33,6 +33,8 @@ STRELKA="path/to/strelka"
 DATABASE="path/to/database"
 TEMP="path/to/temp"
 VEP="path/to/vep"
+FASTP="path/to/fastp"
+SAMTOOLS="path/to/samtools"
 
 # Add more reference genome paths as needed
 REFERENCE_RAT="path/to/reference/rat/rn7/rn7.fa"
