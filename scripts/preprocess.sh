@@ -26,7 +26,7 @@ function preprocess(){
 
     if [[ -n "$RAW1" && -n "$RAW2" ]]; then
     mkdir -p 1.fastp
-    fastp -w 8 \
+    $FASTP -w 8 \
         -i $RAW1 \
         -I $RAW2 \
         -o 1.fastp/$(basename ${RAW1}) \
@@ -47,25 +47,25 @@ function preprocess(){
 
     # Convert SAM to BAM
     mkdir -p 3.samtool
-    samtools view \
+    $SAMTOOLS view \
         -bS 2.bwa/${SAMPLE}.sam \
         -o 3.samtool/${SAMPLE}_2.bam \
         1> 3.samtool/samtool.log 2>&1
 
     # Merge BAMs if 3.samtool/${SAMPLE}_1.bam exists, otherwise remove
     if [ -f "3.samtool/${SAMPLE}_1.bam" ]; then
-        samtools merge -@ 8 -h 3.samtool/${SAMPLE}_2.bam \
+        $SAMTOOLS merge -@ 8 -h 3.samtool/${SAMPLE}_2.bam \
         3.samtool/${SAMPLE}.bam \
         3.samtool/${SAMPLE}_1.bam \
         3.samtool/${SAMPLE}_2.bam
     else
         mv 3.samtool/${SAMPLE}_2.bam 3.samtool/${SAMPLE}.bam
     fi
-    samtools sort -@ 8 3.samtool/${SAMPLE}.bam -o 3.samtool/${SAMPLE}.sorted.bam 1> 3.samtool/sort.log 2>&1
+    $SAMTOOLS sort -@ 8 3.samtool/${SAMPLE}.bam -o 3.samtool/${SAMPLE}.sorted.bam 1> 3.samtool/sort.log 2>&1
 
     # BAM QC statistics
     mkdir -p 4.flagstat
-    samtools flagstat 3.samtool/${SAMPLE}.sorted.bam > 4.flagstat/${SAMPLE}.sorted.stat
+    $SAMTOOLS flagstat 3.samtool/${SAMPLE}.sorted.bam > 4.flagstat/${SAMPLE}.sorted.stat
 
     # Mark duplicates and create BAM index
     mkdir -p 5.markdup
